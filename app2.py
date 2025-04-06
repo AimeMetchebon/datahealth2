@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+
+#from matplotlib import pyplot
+#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -15,7 +20,8 @@ from sklearn.metrics import precision_score, recall_score
 
 from PIL import Image
 
-st.set_option('deprecation.showPyplotGlobalUse', False)
+#st.set_option('deprecation.showPyplotGlobalUse', False)
+#st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # clf = SVC(random_state=0)
 # clf.fit(X_train, y_train)
@@ -44,8 +50,13 @@ def main():
    
     @st.cache_data(persist=True)
     def load_datadb():
-        datadb = pd.read_csv('diabete.csv')
+        datadb = pd.read_csv('diabetes.csv')
         return datadb
+    
+    @st.cache_data(persist=True)
+    def load_datamc():
+        datamc = pd.read_csv('dfmc.csv')
+        return datamc
     
     @st.cache_data(persist=True)
     def load_datacf():
@@ -57,10 +68,7 @@ def main():
         datackd = pd.read_csv('dfckdnn.csv')
         return datackd
     
-    @st.cache_data(persist=True)
-    def load_datamc():
-        datamc = pd.read_csv('dfmc.csv')
-        return datamc
+    
 
     # Affichage de la table de donnees
     dfdb = load_datadb()
@@ -114,24 +122,57 @@ def main():
         def plot_perf(graphes):
             if 'Confusion matrix' in graphes:
                 st.subheader('Matrice de confusion')
-                ConfusionMatrixDisplay.from_estimator(
+                disp = ConfusionMatrixDisplay.from_estimator(
                 model, X_test, y_test
                 )
-                st.pyplot()
+                #st.pyplot()
+
+                # Plot the confusion matrix and get the figure object
+                fig, ax = plt.subplots(figsize=(6, 4))
+                disp.plot(ax=ax)
+    
+                # Save the figure using matplotlib's savefig
+                #fig.savefig('confusion_matrix.png')  # You can specify the path here
+    
+                # Display the plot using Streamlit
+                st.pyplot(fig)
+                #plt.clf
 
             if 'ROC curve' in graphes:
                 st.subheader('Courbe ROC')
-                RocCurveDisplay.from_estimator(
+                disp = RocCurveDisplay.from_estimator(
                 model, X_test, y_test
                  )
-                st.pyplot()
+                #st.pyplot()
+
+                # Plot the ROC Curve  and get the figure object
+                fig, ax = plt.subplots(figsize=(6, 4))
+                disp.plot(ax=ax)
+    
+                # Save the figure using matplotlib's savefig
+                #fig.savefig('confusion_matrix.png')  # You can specify the path here
+    
+                # Display the plot using Streamlit
+                st.pyplot(fig)
+                #plt.clf
 
             if 'Precision-Recall curve' in graphes:
                 st.subheader('Precision-Recall curve')
-                PrecisionRecallDisplay.from_estimator(
+                disp = PrecisionRecallDisplay.from_estimator(
                  model, X_test, y_test
                 )
-                st.pyplot()
+                #st.pyplot()
+
+                # Plot the Precision Recall  and get the figure object
+                fig, ax = plt.subplots(figsize=(6, 4))
+                disp.plot(ax=ax)
+    
+                # Save the figure using matplotlib's savefig
+                #fig.savefig('confusion_matrix.png')  # You can specify the path here
+    
+                # Display the plot using Streamlit
+                st.pyplot(fig)
+                #plt.clf
 
         graphes_perf = st.sidebar.multiselect(
         "Choisir un graphique de performance du modele ML",
@@ -203,7 +244,8 @@ def main():
                 st.write("Recall", round(recall,3))
 
                 # Afficher les graphiques de performance
-                plot_perf(graphes_perf)   
+                plot_perf(graphes_perf)
+                #plt.clf()  
         
         
                 st.subheader("Prediction de la predisposition a la maladie")
